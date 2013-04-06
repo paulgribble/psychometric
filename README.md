@@ -57,3 +57,6 @@ an example data file is data.txt
 	     'modelpred.txt' using 1:2 title 'model' with lines
 	***************************************************************
 
+An example of the graphic produced by the gnuplot commands for data.txt:
+
+![Image](modelpred.gif)
