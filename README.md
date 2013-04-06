@@ -38,19 +38,19 @@ an example data file is data.txt
 	(lots of output)
 	...
 	The minimum was found at
-	1.860482e-01
-	1.413820e-01
-	72 Function Evaluations
-	36 Iterations through program
-	min = 70.23225
-	
+	6.040993e-01
+	4.870924e-01
+	73 Function Evaluations
+	35 Iterations through program
+	min = 23.64467
+
 	***************************************************************
-	y =  0.18605 + ( 0.14138 * x)
+	y =  0.60410 + ( 0.48709 * x)
 	p(r|x) = 1 / (1 + exp(-y))
 	***************************************************************
-	bias = -1.31593
-	slope at 50% =  0.03535
-	acuity (x75 - x25) = ( 6.45460 - -9.08645) = 15.54105
+	bias = -1.24022
+	slope at 50% =  0.12177
+	acuity (x75 - x25) = ( 1.01523 - -3.49566) =  4.51090
 	***************************************************************
 	gnuplot commands to plot result:
 
