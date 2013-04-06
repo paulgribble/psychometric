@@ -25,8 +25,9 @@ The model parameters b0 and b1 are found that minimize the negative log-likeliho
 The program outputs:
 
 * the model parameters b0 and b1,
-* the bias (the 50th percentile) and
-* the acuity (the distance between the 25th and 75th percentile)
+* the bias (the x value at the 50th percentile) and
+* the slope at the 50th percentile
+* the acuity (the distance in x between the 25th and 75th percentile)
 * model predictions (x,p(x)) in an output file specified on the command line
 
 an example data file is data.txt
@@ -48,13 +49,15 @@ an example data file is data.txt
 	p(r|x) = 1 / (1 + exp(-y))
 	***************************************************************
 	bias = -1.31593
+	slope at 50% =  0.03535
 	acuity (x75 - x25) = ( 6.45460 - -9.08645) = 15.54105
 	***************************************************************
 	gnuplot commands to plot result:
 
 	set yrange [-.05:1.15]
 	plot 'data.txt' using 1:($2 + (rand(0)/20)) title 'data' with points, \
-         'modelpred.txt' using 1:2 title 'model' with lines
+	     'modelpred.txt' using 1:2 title 'model' with lines
+
 	***************************************************************
 
 An example of the graphic produced by the gnuplot commands for data.txt is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.

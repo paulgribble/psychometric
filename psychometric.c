@@ -171,7 +171,7 @@ double maxarray(double *data, int n)
 		 	printf("p(r|x) = 1 / (1 + exp(-y))\n");
 		 	printf("***************************************************************\n");
 		 	printf("bias = %8.5f\n", -b[0]/b[1]);
-			//printf("slope = %8.5f\n", start[1]/4);
+			printf("slope at 50%% = %8.5f\n", b[1]/4);
 		 	double x25 = i_logit(0.25, b);
 		 	double x75 = i_logit(0.75, b);
 		 	printf("acuity (x75 - x25) = (%8.5f - %8.5f) = %8.5f\n", x75, x25, x75-x25);
