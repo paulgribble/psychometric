@@ -124,12 +124,37 @@ double nll(double x[], void *extra)
 /* =============================================================================================== */
  
 
+/* ============== LITTLE UTILITY FUNCTIONS TO FIND THE MINIMUM & MAXIMUM OF AN ARRAY ============= */
+//
+double minarray(double *data, int n)
+{
+	double min = data[0];
+	int i;
+	for (i=0; i<n; i++) {
+		if (data[i] < min) { min = data[i]; }
+	}
+	return min;
+}
+
+double maxarray(double *data, int n)
+{
+	double max = data[0];
+	int i;
+	for (i=0; i<n; i++) {
+		if (data[i] > max) { max = data[i]; }
+	}
+	return max;
+}
+/* =============================================================================================== */
+
+
+
  /* ====================================== THE MAIN FUNCTION ===================================== */
 //
-int main(int argc, char *argv[])
+ int main(int argc, char *argv[])
  {
- 	if (argc < 2) {
- 		printf("USAGE: ./logit fname\n");
+ 	if (argc < 3) {
+ 		printf("USAGE: ./logit fname_data fname_output\n");
  		return 1;
  	}
  	else {
@@ -151,8 +176,32 @@ int main(int argc, char *argv[])
 		 	double x75 = i_logit(0.75, b);
 		 	printf("acuity (x75 - x25) = (%8.5f - %8.5f) = %8.5f\n", x75, x25, x75-x25);
 		 	printf("*****************************************************\n");
+		 	FILE *fid = fopen(argv[2], "w");
+		 	if (fid == NULL) {
+		 		printf("error opening output file for writing%s\n", argv[2]);
+		 	}
+		 	else {
+		 		// output predicted values to output file
+		 		double xmin = minarray(thedata->data[0], thedata->data_n);
+		 		double xmax = maxarray(thedata->data[0], thedata->data_n);
+		 		int npts = 50;
+		 		int i;
+		 		double xi, yi, pi;
+		 		double xinc = ((xmax-xmin)/(npts-1));
+		 		for (i=0; i<npts; i++) {
+		 			xi = (xinc * i) + xmin;
+		 			yi = b[0] + (b[1] * xi);
+		 			pi = logit(yi);
+		 			fprintf(fid, "%8.5f %8.5f\n", xi, pi);
+		 		}
+		 		fclose(fid);
+		 		printf("gnuplot commands to plot result:\n\n");
+		 		printf("set yrange [-.05:1.15]\n");
+		 		printf("plot '%s' using 1:2 title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], argv[2]);
+		 		printf("\n*****************************************************\n");
+		 	}
+		 	datastruct_free(thedata);
 		 }
-		 datastruct_free(thedata);
 		}
 		return 0;
 	}
