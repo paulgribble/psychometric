@@ -197,7 +197,7 @@ double maxarray(double *data, int n)
 		 		fclose(fid);
 		 		printf("gnuplot commands to plot result:\n\n");
 		 		printf("set yrange [-.05:1.15]\n");
-		 		printf("plot '%s' using 1:2 title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], argv[2]);
+		 		printf("plot '%s' using 1:($2 + (rand(0)/20)) title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], argv[2]);
 		 		printf("\n***************************************************************\n");
 		 	}
 		 	datastruct_free(thedata);

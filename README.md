@@ -53,10 +53,10 @@ an example data file is data.txt
 	gnuplot commands to plot result:
 
 	set yrange [-.05:1.15]
-	plot 'data.txt' using 1:2 title 'data' with points, \
-	     'modelpred.txt' using 1:2 title 'model' with lines
+	plot 'data.txt' using 1:($2 + (rand(0)/20)) title 'data' with points, \
+         'modelpred.txt' using 1:2 title 'model' with lines
 	***************************************************************
 
-An example of the graphic produced by the gnuplot commands for data.txt:
+An example of the graphic produced by the gnuplot commands for data.txt is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
 
 ![Image](modelpred.gif)
