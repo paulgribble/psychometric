@@ -166,16 +166,16 @@ double maxarray(double *data, int n)
 		 	double b[] = {0.3, 0.15}; // initial guess at b[0],b[1] parameters
 		 	double min = simplex(nll, b, 2, 1.0e-8, 1, NULL, thedata);
 		 	printf("min = %8.5f\n", min);
-		 	printf("\n*****************************************************\n");
+		 	printf("\n***************************************************************\n");
 		 	printf("y = %8.5f + (%8.5f * x)\n", b[0], b[1]);
 		 	printf("p(r|x) = 1 / (1 + exp(-y))\n");
-		 	printf("*****************************************************\n");
+		 	printf("***************************************************************\n");
 		 	printf("bias = %8.5f\n", -b[0]/b[1]);
 			//printf("slope = %8.5f\n", start[1]/4);
 		 	double x25 = i_logit(0.25, b);
 		 	double x75 = i_logit(0.75, b);
 		 	printf("acuity (x75 - x25) = (%8.5f - %8.5f) = %8.5f\n", x75, x25, x75-x25);
-		 	printf("*****************************************************\n");
+		 	printf("***************************************************************\n");
 		 	FILE *fid = fopen(argv[2], "w");
 		 	if (fid == NULL) {
 		 		printf("error opening output file for writing%s\n", argv[2]);
@@ -198,7 +198,7 @@ double maxarray(double *data, int n)
 		 		printf("gnuplot commands to plot result:\n\n");
 		 		printf("set yrange [-.05:1.15]\n");
 		 		printf("plot '%s' using 1:2 title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], argv[2]);
-		 		printf("\n*****************************************************\n");
+		 		printf("\n***************************************************************\n");
 		 	}
 		 	datastruct_free(thedata);
 		 }
