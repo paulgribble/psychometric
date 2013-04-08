@@ -156,7 +156,7 @@ double maxarray(double *data, int n)
  int main(int argc, char *argv[])
  {
  	if (argc < 3) {
- 		printf("USAGE: ./logit fname_data fname_output\n");
+ 		printf("USAGE: ./psychometric fname_data fname_output\n");
  		return 1;
  	}
  	else {
