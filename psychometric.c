@@ -12,6 +12,8 @@
  
  #include "nmsimplex.h"
  #include <stdio.h>
+ #include <math.h>
+ #include <time.h>
 
 /* ============= DATA STRUCTURE AND UTILITY FUNCTIONS TO STORE DATA LOADED FROM FILE ============= */
 //
@@ -163,8 +165,13 @@ double maxarray(double *data, int n)
  			return 1;
  		}
  		else {
-		 	double b[] = {0.3, 0.15}; // initial guess at b[0],b[1] parameters
-		 	double min = simplex(nll, b, 2, 1.0e-8, 1, NULL, thedata);
+		 	double b[2]; // to store the 2 logistic coefficients
+		 	srand ((unsigned)time(NULL));
+		 	b[0] = (double) rand() / RAND_MAX; // 1st rand() call is not so random (why?)
+		 	b[0] = (double) rand() / RAND_MAX; // initialize starting guess to random values between 0 and 1
+		 	b[1] = (double) rand() / RAND_MAX;
+		 	printf("XXXXX-----> %8.5f, %8.5f\n", b[0], b[1]);
+		 	double min = simplex(nll, b, 2, 1.0e-8, 1, NULL, thedata); // find b[] to minimize nll()
 		 	printf("min = %8.5f\n", min);
 		 	printf("\n***************************************************************\n");
 		 	printf("y = %8.5f + (%8.5f * x)\n", b[0], b[1]);
