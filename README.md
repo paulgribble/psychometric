@@ -22,44 +22,48 @@ The model is of the form:
 
 The model parameters b0 and b1 are found that minimize the negative log-likelihood of the data. This is done using numerical optimization. The [Nelder-Mead simplex algorithm](http://en.wikipedia.org/wiki/Nelder–Mead_method) is used here. The code makes use of [Michael Hutt's](http://www.mikehutt.com) implementation of the Nelder-Mead algorithm.
 
-The program outputs:
+The program outputs to the screen:
 
 * the model parameters b0 and b1,
 * the bias (the x value at the 50th percentile) and
 * the slope at the 50th percentile
 * the acuity (the distance in x between the 25th and 75th percentile)
-* model predictions (x,p(x)) in an output file specified on the command line
 
-an example data file is data.txt
+The program also generates two output files:
+
+* _modelparams: b0, b1, bias, slope, x75, x25, x72-x25
+* _modelpred: p(x) for 50 x points across the range of input x
+
+an example data file is exdata
 
 	gcc -Wall -o psychometric psychometric.c nmsimplex.c
-	./psychometric data.txt modelpred.txt
+	./psychometric exdata
 	...
 	(lots of output)
 	...
 	The minimum was found at
-	6.040993e-01
-	4.870924e-01
-	73 Function Evaluations
-	35 Iterations through program
+	6.041815e-01
+	4.871096e-01
+	66 Function Evaluations
+	33 Iterations through program
 	min = 23.64467
 
 	***************************************************************
-	y =  0.60410 + ( 0.48709 * x)
+	y = 0.60418 + (0.48711 * x)
 	p(r|x) = 1 / (1 + exp(-y))
 	***************************************************************
-	bias = -1.24022
-	slope at 50% =  0.12177
-	acuity (x75 - x25) = ( 1.01523 - -3.49566) =  4.51090
+	bias = -1.24034
+	slope at 50% = 0.12178
+	acuity (x75 - x25) = (1.01503 - -3.49571) = 4.51074
 	***************************************************************
 	gnuplot commands to plot result:
 
 	set yrange [-.05:1.15]
-	plot 'data.txt' using 1:($2 + (rand(0)/20)) title 'data' with points, \
-	     'modelpred.txt' using 1:2 title 'model' with lines
+	plot 'exdata' using 1:($2 + (rand(0)/20)) title 'data' with points, \
+	     'exdata_modelpred' using 1:2 title 'model' with lines
 
 	***************************************************************
 
-An example of the graphic produced by the gnuplot commands for data.txt is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
+An example of the graphic produced by the gnuplot commands for exdata is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
 
-![Image](modelpred.gif)
+![Image](exdata_modelpred.gif)

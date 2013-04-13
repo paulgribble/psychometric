@@ -14,6 +14,7 @@
  #include <stdio.h>
  #include <math.h>
  #include <time.h>
+ #include <string.h>
 
 /* ============= DATA STRUCTURE AND UTILITY FUNCTIONS TO STORE DATA LOADED FROM FILE ============= */
 //
@@ -155,8 +156,8 @@ double maxarray(double *data, int n)
 //
  int main(int argc, char *argv[])
  {
- 	if (argc < 3) {
- 		printf("USAGE: ./psychometric fname_data fname_output\n");
+ 	if (argc < 2) {
+ 		printf("USAGE: ./psychometric fname_data\n");
  		return 1;
  	}
  	else {
@@ -170,22 +171,31 @@ double maxarray(double *data, int n)
 		 	b[0] = (double) rand() / RAND_MAX; // 1st rand() call is not so random (why?)
 		 	b[0] = (double) rand() / RAND_MAX; // initialize starting guess to random values between 0 and 1
 		 	b[1] = (double) rand() / RAND_MAX;
-		 	printf("XXXXX-----> %8.5f, %8.5f\n", b[0], b[1]);
+		 	printf("XXXXX-----> %7.5f, %7.5f\n", b[0], b[1]);
 		 	double min = simplex(nll, b, 2, 1.0e-8, 1, NULL, thedata); // find b[] to minimize nll()
-		 	printf("min = %8.5f\n", min);
+		 	printf("min = %7.5f\n", min);
 		 	printf("\n***************************************************************\n");
-		 	printf("y = %8.5f + (%8.5f * x)\n", b[0], b[1]);
+		 	printf("y = %7.5f + (%7.5f * x)\n", b[0], b[1]);
 		 	printf("p(r|x) = 1 / (1 + exp(-y))\n");
 		 	printf("***************************************************************\n");
-		 	printf("bias = %8.5f\n", -b[0]/b[1]);
-			printf("slope at 50%% = %8.5f\n", b[1]/4);
+		 	printf("bias = %7.5f\n", -b[0]/b[1]);
+			printf("slope at 50%% = %7.5f\n", b[1]/4);
 		 	double x25 = i_logit(0.25, b);
 		 	double x75 = i_logit(0.75, b);
-		 	printf("acuity (x75 - x25) = (%8.5f - %8.5f) = %8.5f\n", x75, x25, x75-x25);
+		 	printf("acuity (x75 - x25) = (%7.5f - %7.5f) = %7.5f\n", x75, x25, x75-x25);
 		 	printf("***************************************************************\n");
-		 	FILE *fid = fopen(argv[2], "w");
-		 	if (fid == NULL) {
-		 		printf("error opening output file for writing%s\n", argv[2]);
+		 	char fn_modelparams[256];
+		 	strcat(fn_modelparams, argv[1]);
+		 	strcat(fn_modelparams, "_");
+		 	strcat(fn_modelparams, "modelparams");
+		 	char fn_modelpred[256];
+		 	strcat(fn_modelpred, argv[1]);
+		 	strcat(fn_modelpred, "_");
+		 	strcat(fn_modelpred, "modelpred");
+		 	FILE *fid_modelparams = fopen(fn_modelparams, "w");
+		 	FILE *fid_modelpred = fopen(fn_modelpred, "w");
+		 	if ((fid_modelparams == NULL) | (fid_modelpred == NULL)) {
+		 		printf("error opening output file for writing\n");
 		 	}
 		 	else {
 		 		// output predicted values to output file
@@ -199,12 +209,15 @@ double maxarray(double *data, int n)
 		 			xi = (xinc * i) + xmin;
 		 			yi = b[0] + (b[1] * xi);
 		 			pi = logit(yi);
-		 			fprintf(fid, "%8.5f %8.5f\n", xi, pi);
+		 			fprintf(fid_modelpred, "%7.5f %7.5f\n", xi, pi);
 		 		}
-		 		fclose(fid);
+		 		fprintf(fid_modelparams, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
+		 			b[0], b[1], -b[0]/b[1], b[1]/4, x75, x25, x75-x25);
+		 		fclose(fid_modelparams);
+		 		fclose(fid_modelpred);
 		 		printf("gnuplot commands to plot result:\n\n");
 		 		printf("set yrange [-.05:1.15]\n");
-		 		printf("plot '%s' using 1:($2 + (rand(0)/20)) title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], argv[2]);
+		 		printf("plot '%s' using 1:($2 + (rand(0)/20)) title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], fn_modelpred);
 		 		printf("\n***************************************************************\n");
 		 	}
 		 	datastruct_free(thedata);
