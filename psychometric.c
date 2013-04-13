@@ -69,7 +69,7 @@ void *load_data(char fname[]) {
 		return NULL;
 	}
 	else {
-		printf("found %d rows of data in screen.cal\n", n);
+		printf("found %d rows of data in %s\n", n, fname);
 		datastruct *thedata = datastruct_allocate(n);
 		FILE *fid = fopen(fname,"r");
 		int i;
@@ -129,26 +129,27 @@ double nll(double x[], void *extra)
 
 /* ============== LITTLE UTILITY FUNCTIONS TO FIND THE MINIMUM & MAXIMUM OF AN ARRAY ============= */
 //
-double minarray(double *data, int n)
-{
-	double min = data[0];
-	int i;
-	for (i=0; i<n; i++) {
-		if (data[i] < min) { min = data[i]; }
-	}
-	return min;
-}
+ double minarray(double *data, int n)
+ {
+ 	double min = data[0];
+ 	int i;
+ 	for (i=0; i<n; i++) {
+ 		if (data[i] < min) { min = data[i]; }
+ 	}
+ 	return min;
+ }
 
-double maxarray(double *data, int n)
-{
-	double max = data[0];
-	int i;
-	for (i=0; i<n; i++) {
-		if (data[i] > max) { max = data[i]; }
-	}
-	return max;
-}
+ double maxarray(double *data, int n)
+ {
+ 	double max = data[0];
+ 	int i;
+ 	for (i=0; i<n; i++) {
+ 		if (data[i] > max) { max = data[i]; }
+ 	}
+ 	return max;
+ }
 /* =============================================================================================== */
+
 
 
 
@@ -156,34 +157,40 @@ double maxarray(double *data, int n)
 //
  int main(int argc, char *argv[])
  {
- 	if (argc < 2) {
- 		printf("USAGE: ./psychometric fname_data\n");
+ 	int nboot;
+ 	if (argc < 3) {
+ 		printf("\nUSAGE: ./psychometric fname_data nboot\n\n");
  		return 1;
  	}
  	else {
+ 		nboot = atoi(argv[2]);
  		datastruct *thedata = load_data(argv[1]);
  		if (thedata == NULL) {
  			return 1;
  		}
  		else {
+
+ 			// data loaded, let's go!
 		 	double b[2]; // to store the 2 logistic coefficients
-		 	srand ((unsigned)time(NULL));
+		 	srand ((unsigned)time(NULL));      // initialize random seed based on system time
 		 	b[0] = (double) rand() / RAND_MAX; // 1st rand() call is not so random (why?)
 		 	b[0] = (double) rand() / RAND_MAX; // initialize starting guess to random values between 0 and 1
 		 	b[1] = (double) rand() / RAND_MAX;
-		 	printf("XXXXX-----> %7.5f, %7.5f\n", b[0], b[1]);
-		 	double min = simplex(nll, b, 2, 1.0e-8, 1, NULL, thedata); // find b[] to minimize nll()
-		 	printf("min = %7.5f\n", min);
-		 	printf("\n***************************************************************\n");
+		 	double min;
+
+		 	min = simplex(nll, b, 2, 1.0e-8, 1, NULL, thedata); // find b[] to minimize nll()
+		 	
+		 	// print some junk to the screen
+		 	printf("***************************************************************\n");
 		 	printf("y = %7.5f + (%7.5f * x)\n", b[0], b[1]);
 		 	printf("p(r|x) = 1 / (1 + exp(-y))\n");
 		 	printf("***************************************************************\n");
 		 	printf("bias = %7.5f\n", -b[0]/b[1]);
-			printf("slope at 50%% = %7.5f\n", b[1]/4);
-		 	double x25 = i_logit(0.25, b);
-		 	double x75 = i_logit(0.75, b);
-		 	printf("acuity (x75 - x25) = (%7.5f - %7.5f) = %7.5f\n", x75, x25, x75-x25);
+		 	printf("slope at 50%% = %7.5f\n", b[1]/4);
+		 	printf("acuity (x75 - x25) = (%7.5f - %7.5f) = %7.5f\n", i_logit(0.75, b), i_logit(0.25, b), i_logit(0.75, b)-i_logit(0.25, b));
 		 	printf("***************************************************************\n");
+
+		 	// construct filenames to store modelparams and modelpred
 		 	char fn_modelparams[256];
 		 	strcat(fn_modelparams, argv[1]);
 		 	strcat(fn_modelparams, "_");
@@ -192,13 +199,22 @@ double maxarray(double *data, int n)
 		 	strcat(fn_modelpred, argv[1]);
 		 	strcat(fn_modelpred, "_");
 		 	strcat(fn_modelpred, "modelpred");
+
+	 		printf("gnuplot commands to plot result:\n");
+	 		printf("set yrange [-.05:1.15]\n");
+	 		printf("plot '%s' using 1:($2 + (rand(0)/20)) title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], fn_modelpred);
+	 		printf("***************************************************************\n");
+
+		 	// open the output files for writing
 		 	FILE *fid_modelparams = fopen(fn_modelparams, "w");
 		 	FILE *fid_modelpred = fopen(fn_modelpred, "w");
 		 	if ((fid_modelparams == NULL) | (fid_modelpred == NULL)) {
+
 		 		printf("error opening output file for writing\n");
 		 	}
 		 	else {
-		 		// output predicted values to output file
+		 		
+		 		// output model predicted values to file
 		 		double xmin = minarray(thedata->data[0], thedata->data_n);
 		 		double xmax = maxarray(thedata->data[0], thedata->data_n);
 		 		int npts = 50;
@@ -211,26 +227,61 @@ double maxarray(double *data, int n)
 		 			pi = logit(yi);
 		 			fprintf(fid_modelpred, "%7.5f %7.5f\n", xi, pi);
 		 		}
-		 		fprintf(fid_modelparams, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
-		 			b[0], b[1], -b[0]/b[1], b[1]/4, x75, x25, x75-x25);
-		 		fclose(fid_modelparams);
 		 		fclose(fid_modelpred);
-		 		printf("gnuplot commands to plot result:\n\n");
-		 		printf("set yrange [-.05:1.15]\n");
-		 		printf("plot '%s' using 1:($2 + (rand(0)/20)) title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], fn_modelpred);
-		 		printf("\n***************************************************************\n");
+		 		
+		 		// output model parameters to file
+		 		fprintf(fid_modelparams, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
+		 			b[0], b[1], -b[0]/b[1], b[1]/4, i_logit(0.75, b), i_logit(0.25, b), i_logit(0.75, b)-i_logit(0.25, b));
 
-		 		// bootstrap estimates of parameters
-		 		int nboot = 10000;
-		 		for (i=0; i<nboot; i++) {
-		 			
-		 		}
-		 	}
-		 	datastruct_free(thedata);
-		 }
+		 		// bootstrap estimates of parameters by simulating responses at each x value
+		 		if (nboot > 0) {
+
+		 			printf("bootstrapping %d times...\n", nboot);
+		 			int j;
+		 			double bmin, bb[2], pboot, yboot, rboot;
+
+		 			// make a copy of the data
+		 			datastruct *bootdata = datastruct_allocate(thedata->data_n);
+		 			for (j=0; j<bootdata->data_n; j++) {
+		 				bootdata->data[0][j] = thedata->data[0][j];
+		 				bootdata->data[1][j] = thedata->data[1][j];
+		 			}
+
+		 			// simulate the experiment nboot times
+		 			for (i=0; i<nboot; i++) {
+				 		bb[0] = (double) rand() / RAND_MAX; // starting guess
+				 		bb[1] = (double) rand() / RAND_MAX;
+				 		// for each x point
+				 		for (j=0; j<bootdata->data_n; j++) {
+				 			yboot = b[0] + (b[1] * bootdata->data[0][j]);
+				 			pboot = logit(yboot);
+				 			// simulate the response
+				 			rboot = (double) rand() / RAND_MAX;
+				 			if (rboot <= pboot) {
+				 				bootdata->data[1][j] = 1.0;
+				 			}
+				 			else {
+				 				bootdata->data[1][j] = 0.0;
+				 			}
+				 		}
+
+				 	// re-estimate the psychophysical curve based on the simulated response data
+				 	bmin = simplex(nll, bb, 2, 1.0e-8, 1, NULL, bootdata);
+
+				 	// output the new estimates to the output file
+				 	fprintf(fid_modelparams, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
+				 		bb[0], bb[1], -bb[0]/bb[1], bb[1]/4, i_logit(0.75,bb), i_logit(0.25,bb), i_logit(0.75,bb)-i_logit(0.25,bb));
+					}
+					printf("done\n");
+			 		datastruct_free(bootdata);
+					fclose(fid_modelparams);
+				}
+			}
+			datastruct_free(thedata);
 		}
-		return 0;
 	}
+	return 0;
+}
 /* =============================================================================================== */
 
 

@@ -33,37 +33,29 @@ The program also generates two output files:
 
 * _modelparams
 	* row 1 = b0, b1, bias, slope, x75, x25, x72-x25
+	* rows 2 -> nboot are re-estimates based on nboot simulations of the experimental responses
 * _modelpred: p(x) for 50 x points across the range of input x
 
 an example data file is exdata
 
 	gcc -Wall -o psychometric psychometric.c nmsimplex.c
-	./psychometric exdata
-	...
-	(lots of output)
-	...
-	The minimum was found at
-	6.041815e-01
-	4.871096e-01
-	66 Function Evaluations
-	33 Iterations through program
-	min = 23.64467
-
+	./psychometric exdata 10000
+	found 154 rows of data in exdata
 	***************************************************************
-	y = 0.60418 + (0.48711 * x)
+	y = 0.60414 + (0.48712 * x)
 	p(r|x) = 1 / (1 + exp(-y))
 	***************************************************************
-	bias = -1.24034
+	bias = -1.24024
 	slope at 50% = 0.12178
-	acuity (x75 - x25) = (1.01503 - -3.49571) = 4.51074
+	acuity (x75 - x25) = (1.01511 - -3.49558) = 4.51069
 	***************************************************************
 	gnuplot commands to plot result:
-
 	set yrange [-.05:1.15]
 	plot 'exdata' using 1:($2 + (rand(0)/20)) title 'data' with points, \
 	     'exdata_modelpred' using 1:2 title 'model' with lines
-
 	***************************************************************
+	bootstrapping 10000 times...
+	done
 
 An example of the graphic produced by the gnuplot commands for exdata is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
 

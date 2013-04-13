@@ -116,13 +116,14 @@ double simplex(double (*objfunc)(double[], void *extra), double start[],int n, d
   k = n+1;
 	
   /* print out the initial values */
+/*
   printf("Initial Values\n");
   for (j=0;j<=n;j++) {
     for (i=0;i<n;i++) {
       printf("%f %f\n",v[j][i],f[j]);
     }
   }
-
+*/
 
   /* begin the main loop of the minimization */
   for (itr=1;itr<=MAX_IT;itr++) {     
@@ -270,13 +271,14 @@ double simplex(double (*objfunc)(double[], void *extra), double start[],int n, d
     }
 		
     /* print out the value at each iteration */
+/*
     printf("Iteration %d\n",itr);
     for (j=0;j<=n;j++) {
       for (i=0;i<n;i++) {
 	printf("%f %f\n",v[j][i],f[j]);
       }
     }
-
+*/
     /* test for convergence */
     fsum = 0.0;
     for (j=0;j<=n;j++) {
@@ -300,15 +302,15 @@ double simplex(double (*objfunc)(double[], void *extra), double start[],int n, d
     }
   }
 
-  printf("The minimum was found at\n"); 
+//  printf("The minimum was found at\n"); 
   for (j=0;j<n;j++) {
-    printf("%e\n",v[vs][j]);
+//    printf("%e\n",v[vs][j]);
     start[j] = v[vs][j];
   }
   min=objfunc(v[vs], extra);
   k++;
-  printf("%d Function Evaluations\n",k);
-  printf("%d Iterations through program\n",itr);
+//  printf("%d Function Evaluations\n",k);
+//  printf("%d Iterations through program\n",itr);
 
   free(f);
   free(vr);
