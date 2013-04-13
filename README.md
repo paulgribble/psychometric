@@ -60,3 +60,19 @@ an example data file is exdata
 An example of the graphic produced by the gnuplot commands for exdata is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
 
 ![Image](exdata_modelpred.gif)
+
+You can have a look at the bootstrap distributions of the parameters like so: (here I use [GNU Octave][http://www.gnu.org/software/octave/]):
+
+	load exdata_modelparams
+	figure
+	subplot(2,1,1)
+	hist(exdata_modelparams(:,3))
+	xlabel('BIAS (mm)')
+	ylabel('COUNT')
+	subplot(2,1,2)
+	hist(exdata_modelparams(:,7))
+	xlabel('ACUITY (mm)')
+	ylabel('COUNT')
+	print exdata_modelparams.jpg -djpg
+
+![Image](exdata_modelparams.jpg)
