@@ -219,6 +219,12 @@ double maxarray(double *data, int n)
 		 		printf("set yrange [-.05:1.15]\n");
 		 		printf("plot '%s' using 1:($2 + (rand(0)/20)) title 'data' with points, \\\n     '%s' using 1:2 title 'model' with lines\n", argv[1], fn_modelpred);
 		 		printf("\n***************************************************************\n");
+
+		 		// bootstrap estimates of parameters
+		 		int nboot = 10000;
+		 		for (i=0; i<nboot; i++) {
+		 			
+		 		}
 		 	}
 		 	datastruct_free(thedata);
 		 }
@@ -226,5 +232,22 @@ double maxarray(double *data, int n)
 		return 0;
 	}
 /* =============================================================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

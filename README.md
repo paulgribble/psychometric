@@ -33,7 +33,6 @@ The program also generates two output files:
 
 * _modelparams
 	* row 1 = b0, b1, bias, slope, x75, x25, x72-x25
-	* rows 2 through 10,0001 are bootstrap re-estimates of the parameters
 * _modelpred: p(x) for 50 x points across the range of input x
 
 an example data file is exdata
