@@ -59,7 +59,7 @@ an example data file is exdata
 
 An example of the graphic produced by the gnuplot commands for exdata is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
 
-![Image](exdata_modelpred.gif)@50
+![Image](exdata_modelpred.gif)
 
 You can have a look at the bootstrap distributions of the parameters like so: (here I use [GNU Octave][http://www.gnu.org/software/octave/]):
 
