@@ -72,13 +72,13 @@ You can have a look at the bootstrap distributions of the parameters like so: he
 	load exdata_dist
 	figure
 	subplot(2,1,1)
-	hist(exdata_dist(:,3))
+	hist(exdata_dist(:,3),21)
 	xlabel('BIAS (mm)')
 	ylabel('COUNT')
 	load exdata_params
 	line([exdata_params(3) exdata_params(3)],get(gca,'ylim'),'color','r','linewidth',2)
 	subplot(2,1,2)
-	hist(exdata_dist(:,7))
+	hist(exdata_dist(:,7),21)
 	xlabel('ACUITY (mm)')
 	ylabel('COUNT')
 	line([exdata_params(7) exdata_params(7)],get(gca,'ylim'),'color','r','linewidth',2)
