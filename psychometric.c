@@ -176,10 +176,11 @@ double nll(double x[], void *extra)
 		 	b[0] = (double) rand() / RAND_MAX; // 1st rand() call is not so random (why?)
 		 	b[0] = (double) rand() / RAND_MAX; // initialize starting guess to random values between 0 and 1
 		 	b[1] = (double) rand() / RAND_MAX;
+
 		 	double min;
 
 		 	min = simplex(nll, b, 2, 1.0e-8, 1, NULL, thedata); // find b[] to minimize nll()
-		 	
+
 		 	// print some junk to the screen
 		 	printf("***************************************************************\n");
 		 	printf("y = %7.5f + (%7.5f * x)\n", b[0], b[1]);
@@ -243,9 +244,11 @@ double nll(double x[], void *extra)
 
 				 	FILE *fid_dist = fopen(fn_dist, "w");
 				 	if ((fid_dist) == NULL) {
+
 				 		printf("error opening output file for writing\n");
 				 	}
 				 	else {
+
 			 			printf("simulating %d times...\n", ndist);
 			 			int j;
 			 			double bmin, bb[2], pdist, ydist, rdist;
@@ -259,8 +262,8 @@ double nll(double x[], void *extra)
 
 			 			// simulate the experiment ndist times
 			 			for (i=0; i<ndist; i++) {
-					 		bb[0] = (double) rand() / RAND_MAX; // starting guess
-					 		bb[1] = (double) rand() / RAND_MAX;
+					 		bb[0] = b[0]; // starting guess
+					 		bb[1] = b[1];
 					 		// for each x point
 					 		for (j=0; j<distdata->data_n; j++) {
 					 			ydist = b[0] + (b[1] * distdata->data[0][j]);
