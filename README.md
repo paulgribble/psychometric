@@ -82,6 +82,6 @@ You can have a look at the bootstrap distributions of the parameters like so: he
 	xlabel('ACUITY (mm)')
 	ylabel('COUNT')
 	line([exdata_params(7) exdata_params(7)],get(gca,'ylim'),'color','r','linewidth',2)
-	print exdata_dist.pdf -dpdf
+	print exdata_dist.png -dpng
 
-![Image](exdata_dist.pdf)
+![Image](exdata_dist.png)
