@@ -157,13 +157,13 @@ double nll(double x[], void *extra)
 //
  int main(int argc, char *argv[])
  {
- 	int nboot;
+ 	int ndist;
  	if (argc < 3) {
- 		printf("\nUSAGE: ./psychometric fname_data nboot\n\n");
+ 		printf("\nUSAGE: ./psychometric fname_data ndist\n\n");
  		return 1;
  	}
  	else {
- 		nboot = atoi(argv[2]);
+ 		ndist = atoi(argv[2]);
  		datastruct *thedata = load_data(argv[1]);
  		if (thedata == NULL) {
  			return 1;
@@ -194,11 +194,15 @@ double nll(double x[], void *extra)
 		 	char fn_modelparams[256];
 		 	strcat(fn_modelparams, argv[1]);
 		 	strcat(fn_modelparams, "_");
-		 	strcat(fn_modelparams, "modelparams");
+		 	strcat(fn_modelparams, "params");
+		 	char fn_dist[256];
+		 	strcat(fn_dist, argv[1]);
+		 	strcat(fn_dist, "_");
+		 	strcat(fn_dist, "dist");
 		 	char fn_modelpred[256];
 		 	strcat(fn_modelpred, argv[1]);
 		 	strcat(fn_modelpred, "_");
-		 	strcat(fn_modelpred, "modelpred");
+		 	strcat(fn_modelpred, "pred");
 
 	 		printf("gnuplot commands to plot result:\n");
 	 		printf("set yrange [-.05:1.15]\n");
@@ -232,49 +236,56 @@ double nll(double x[], void *extra)
 		 		// output model parameters to file
 		 		fprintf(fid_modelparams, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
 		 			b[0], b[1], -b[0]/b[1], b[1]/4, i_logit(0.75, b), i_logit(0.25, b), i_logit(0.75, b)-i_logit(0.25, b));
+				fclose(fid_modelparams);
 
-		 		// bootstrap estimates of parameters by simulating responses at each x value
-		 		if (nboot > 0) {
+		 		// estimates of parameter distributions by simulating responses at each x value
+		 		if (ndist > 0) {
 
-		 			printf("bootstrapping %d times...\n", nboot);
-		 			int j;
-		 			double bmin, bb[2], pboot, yboot, rboot;
+				 	FILE *fid_dist = fopen(fn_dist, "w");
+				 	if ((fid_dist) == NULL) {
+				 		printf("error opening output file for writing\n");
+				 	}
+				 	else {
+			 			printf("simulating %d times...\n", ndist);
+			 			int j;
+			 			double bmin, bb[2], pdist, ydist, rdist;
 
-		 			// make a copy of the data
-		 			datastruct *bootdata = datastruct_allocate(thedata->data_n);
-		 			for (j=0; j<bootdata->data_n; j++) {
-		 				bootdata->data[0][j] = thedata->data[0][j];
-		 				bootdata->data[1][j] = thedata->data[1][j];
-		 			}
+			 			// make a copy of the data
+			 			datastruct *distdata = datastruct_allocate(thedata->data_n);
+			 			for (j=0; j<distdata->data_n; j++) {
+			 				distdata->data[0][j] = thedata->data[0][j];
+			 				distdata->data[1][j] = thedata->data[1][j];
+			 			}
 
-		 			// simulate the experiment nboot times
-		 			for (i=0; i<nboot; i++) {
-				 		bb[0] = (double) rand() / RAND_MAX; // starting guess
-				 		bb[1] = (double) rand() / RAND_MAX;
-				 		// for each x point
-				 		for (j=0; j<bootdata->data_n; j++) {
-				 			yboot = b[0] + (b[1] * bootdata->data[0][j]);
-				 			pboot = logit(yboot);
-				 			// simulate the response
-				 			rboot = (double) rand() / RAND_MAX;
-				 			if (rboot <= pboot) {
-				 				bootdata->data[1][j] = 1.0;
-				 			}
-				 			else {
-				 				bootdata->data[1][j] = 0.0;
-				 			}
-				 		}
+			 			// simulate the experiment ndist times
+			 			for (i=0; i<ndist; i++) {
+					 		bb[0] = (double) rand() / RAND_MAX; // starting guess
+					 		bb[1] = (double) rand() / RAND_MAX;
+					 		// for each x point
+					 		for (j=0; j<distdata->data_n; j++) {
+					 			ydist = b[0] + (b[1] * distdata->data[0][j]);
+					 			pdist = logit(ydist);
+					 			// simulate the response
+					 			rdist = (double) rand() / RAND_MAX;
+					 			if (rdist <= pdist) {
+					 				distdata->data[1][j] = 1.0;
+					 			}
+					 			else {
+					 				distdata->data[1][j] = 0.0;
+					 			}
+					 		}
 
-				 	// re-estimate the psychophysical curve based on the simulated response data
-				 	bmin = simplex(nll, bb, 2, 1.0e-8, 1, NULL, bootdata);
+					 	// re-estimate the psychophysical curve based on the simulated response data
+					 	bmin = simplex(nll, bb, 2, 1.0e-8, 1, NULL, distdata);
 
-				 	// output the new estimates to the output file
-				 	fprintf(fid_modelparams, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
-				 		bb[0], bb[1], -bb[0]/bb[1], bb[1]/4, i_logit(0.75,bb), i_logit(0.25,bb), i_logit(0.75,bb)-i_logit(0.25,bb));
+					 	// output the new estimates to the output file
+					 	fprintf(fid_dist, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
+					 		bb[0], bb[1], -bb[0]/bb[1], bb[1]/4, i_logit(0.75,bb), i_logit(0.25,bb), i_logit(0.75,bb)-i_logit(0.25,bb));
+						}
+						printf("done\n");
+				 		datastruct_free(distdata);
+						fclose(fid_dist);
 					}
-					printf("done\n");
-			 		datastruct_free(bootdata);
-					fclose(fid_modelparams);
 				}
 			}
 			datastruct_free(thedata);

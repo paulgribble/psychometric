@@ -29,12 +29,12 @@ The program outputs to the screen:
 * the slope at the 50th percentile
 * the acuity (the distance in x between the 25th and 75th percentile)
 
-The program also generates two output files:
+The program also generates three output files:
 
-* _modelparams
-	* row 1 = b0, b1, bias, slope, x75, x25, x72-x25
-	* rows 2 -> nboot are re-estimates based on nboot simulations of the experimental responses
-* _modelpred: p(x) for 50 x points across the range of input x
+* _params
+	* b0, b1, bias, slope, x75, x25, x72-x25
+* _pred: p(x) for 50 x points across the range of input x
+* _paramsdist: model param distribution for simulation of the responses based on MLE estimated psychophysical curve
 
 an example data file is exdata
 
@@ -42,37 +42,37 @@ an example data file is exdata
 	./psychometric exdata 10000
 	found 154 rows of data in exdata
 	***************************************************************
-	y = 0.60414 + (0.48712 * x)
+	y = 0.60417 + (0.48711 * x)
 	p(r|x) = 1 / (1 + exp(-y))
 	***************************************************************
-	bias = -1.24024
+	bias = -1.24031
 	slope at 50% = 0.12178
-	acuity (x75 - x25) = (1.01511 - -3.49558) = 4.51069
+	acuity (x75 - x25) = (1.01504 - -3.49566) = 4.51070
 	***************************************************************
 	gnuplot commands to plot result:
 	set yrange [-.05:1.15]
 	plot 'exdata' using 1:($2 + (rand(0)/20)) title 'data' with points, \
-	     'exdata_modelpred' using 1:2 title 'model' with lines
+	     'exdata_pred' using 1:2 title 'model' with lines
 	***************************************************************
-	bootstrapping 10000 times...
+	simulating 10000 times...
 	done
 
 An example of the graphic produced by the gnuplot commands for exdata is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
 
-![Image](exdata_modelpred.gif)
+![Image](exdata_pred.gif)
 
 You can have a look at the bootstrap distributions of the parameters like so: here I use [GNU Octave](http://www.gnu.org/software/octave/):
 
-	load exdata_modelparams
+	load exdata_dist
 	figure
 	subplot(2,1,1)
-	hist(exdata_modelparams(:,3))
+	hist(exdata_dist(:,3))
 	xlabel('BIAS (mm)')
 	ylabel('COUNT')
 	subplot(2,1,2)
-	hist(exdata_modelparams(:,7))
+	hist(exdata_dist(:,7))
 	xlabel('ACUITY (mm)')
 	ylabel('COUNT')
-	print exdata_modelparams.jpg -djpg
+	print exdata_dist.jpg -djpg
 
-![Image](exdata_modelparams.jpg)
+![Image](exdata_dist.jpg)
