@@ -34,7 +34,7 @@ The program also generates three output files:
 * _params
 	* b0, b1, bias, slope, x75, x25, x72-x25
 * _pred: p(x) for 50 x points across the range of input x
-* _paramsdist: model param distribution for simulation of the responses based on MLE estimated psychophysical curve
+* _dist: model param distribution for simulation of the responses based on MLE estimated psychophysical curve
 
 an example data file is exdata
 
