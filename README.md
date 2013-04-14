@@ -15,12 +15,16 @@ and fits a binomial model + logit link function using [maximum likelihood estima
 
 * [Tutorial on maximum likelihood estimation by IJ Myung](http://www.sciencedirect.com/science/article/pii/S0022249602000287)
 
+### The Model
+
 The model is of the form:
 
 	y = b0 + (b1 * x)
 	p(x) = Pr(response|x) = 1 / (1 + exp(-y))
 
 The model parameters b0 and b1 are found that minimize the negative log-likelihood of the data. This is done using numerical optimization. The [Nelder-Mead simplex algorithm](http://en.wikipedia.org/wiki/Nelder–Mead_method) is used here. The code makes use of [Michael Hutt's](http://www.mikehutt.com) implementation of the Nelder-Mead algorithm.
+
+### Program Outputs
 
 The program outputs to the screen:
 
@@ -35,6 +39,8 @@ The program also generates three output files:
 	* b0, b1, bias, slope, x75, x25, x72-x25
 * _pred: p(x) for 50 x points across the range of input x
 * _dist: model param distribution for simulation of the responses based on MLE estimated psychophysical curve
+
+### An Example
 
 an example data file is exdata
 
