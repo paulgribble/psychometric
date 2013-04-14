@@ -57,7 +57,7 @@ an example data file is exdata
 	simulating 10000 times...
 	done
 
-An example of the graphic produced by the gnuplot commands for exdata is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
+An example of the graphic produced by the [gnuplot](http://www.gnuplot.info) commands for exdata is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
 
 ![Image](exdata_pred.gif)
 
