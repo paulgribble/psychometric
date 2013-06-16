@@ -5,7 +5,7 @@
  * April 4, 2013
  * compile with: gcc -Wall -o psychometric psychometric.c nmsimplex.c
  * loads in an ascii data file (2 columns: col1 = x position, col2 = response {0,1})
- * and fits a psychophysical function using binomial model with logit link function
+ * and fits a psychophysical function using binomial model with logistic link function
  * spits out bias (50% point), slope at 50%,
  * and acuity (middle 50th percentile distance, i.e. 75th - 25th)
  */
@@ -83,16 +83,16 @@ void *load_data(char fname[]) {
 /* =============================================================================================== */
 
 
-/* =========================== THE LOGIT LINK FUNCTION AND ITS INVERSE =========================== */
+/* =========================== THE LOGISTIC LINK FUNCTION AND ITS INVERSE =========================== */
 //
-// logit link function
-double logit(double y)
+// logistic link function
+double logistic(double y)
 {
 	return 1 / (1 + exp(-y));
 }
 
-// inverse logit function
-double i_logit(double p, double b[])
+// inverse logistic function
+double i_logistic(double p, double b[])
 {
 	return (log(-p / (p - 1)) - b[0]) / b[1];
 }
@@ -116,7 +116,7 @@ double nll(double x[], void *extra)
 		pos = data[0][i];
 		r = (int) data[1][i];
 		y = x[0] + x[1]*pos;
- 		p = logit(y); // logit link function
+ 		p = logistic(y); // logistic link function
  		if (p>=1.0) {p = 1.0 - 1e-10;} // avoid numerical nasties
  		if (p<=0.0) {p = 1e-10;}
  		if (r==1) { neg_log_lik -= log(p); }
@@ -188,7 +188,7 @@ double nll(double x[], void *extra)
 		 	printf("***************************************************************\n");
 		 	printf("bias = %7.5f\n", -b[0]/b[1]);
 		 	printf("slope at 50%% = %7.5f\n", b[1]/4);
-		 	printf("acuity (x75 - x25) = (%7.5f - %7.5f) = %7.5f\n", i_logit(0.75, b), i_logit(0.25, b), i_logit(0.75, b)-i_logit(0.25, b));
+		 	printf("acuity (x75 - x25) = (%7.5f - %7.5f) = %7.5f\n", i_logistic(0.75, b), i_logistic(0.25, b), i_logistic(0.75, b)-i_logistic(0.25, b));
 		 	printf("***************************************************************\n");
 
 		 	// construct filenames to store modelparams and modelpred
@@ -229,14 +229,14 @@ double nll(double x[], void *extra)
 		 		for (i=0; i<npts; i++) {
 		 			xi = (xinc * i) + xmin;
 		 			yi = b[0] + (b[1] * xi);
-		 			pi = logit(yi);
+		 			pi = logistic(yi);
 		 			fprintf(fid_modelpred, "%7.5f %7.5f\n", xi, pi);
 		 		}
 		 		fclose(fid_modelpred);
 		 		
 		 		// output model parameters to file
 		 		fprintf(fid_modelparams, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
-		 			b[0], b[1], -b[0]/b[1], b[1]/4, i_logit(0.75, b), i_logit(0.25, b), i_logit(0.75, b)-i_logit(0.25, b));
+		 			b[0], b[1], -b[0]/b[1], b[1]/4, i_logistic(0.75, b), i_logistic(0.25, b), i_logistic(0.75, b)-i_logistic(0.25, b));
 				fclose(fid_modelparams);
 
 		 		// estimates of parameter distributions by simulating responses at each x value
@@ -267,7 +267,7 @@ double nll(double x[], void *extra)
 					 		// for each x point
 					 		for (j=0; j<distdata->data_n; j++) {
 					 			ydist = b[0] + (b[1] * distdata->data[0][j]);
-					 			pdist = logit(ydist);
+					 			pdist = logistic(ydist);
 					 			// simulate the response
 					 			rdist = (double) rand() / RAND_MAX;
 					 			if (rdist <= pdist) {
@@ -283,7 +283,7 @@ double nll(double x[], void *extra)
 
 					 	// output the new estimates to the output file
 					 	fprintf(fid_dist, "%7.5f %7.5f %7.5f %7.5f %7.5f %7.5f %7.5f\n",
-					 		bb[0], bb[1], -bb[0]/bb[1], bb[1]/4, i_logit(0.75,bb), i_logit(0.25,bb), i_logit(0.75,bb)-i_logit(0.25,bb));
+					 		bb[0], bb[1], -bb[0]/bb[1], bb[1]/4, i_logistic(0.75,bb), i_logistic(0.25,bb), i_logistic(0.75,bb)-i_logistic(0.25,bb));
 						}
 						printf("done\n");
 				 		datastruct_free(distdata);
