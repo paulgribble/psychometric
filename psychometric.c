@@ -239,7 +239,8 @@ double nll(double x[], void *extra)
 		 			b[0], b[1], -b[0]/b[1], b[1]/4, i_logistic(0.75, b), i_logistic(0.25, b), i_logistic(0.75, b)-i_logistic(0.25, b));
 				fclose(fid_modelparams);
 
-		 		// estimates of parameter distributions by simulating responses at each x value
+		 		// estimates of parameter distributions
+		 		// using parametric bootstrap ; simulate responses at each x value
 		 		if (ndist > 0) {
 
 				 	FILE *fid_dist = fopen(fn_dist, "w");
@@ -249,7 +250,7 @@ double nll(double x[], void *extra)
 				 	}
 				 	else {
 
-			 			printf("simulating %d times...\n", ndist);
+			 			printf("parametric bootstrap: simulating %d times...\n", ndist);
 			 			int j;
 			 			double bmin, bb[2], pdist, ydist, rdist;
 
