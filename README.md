@@ -38,7 +38,7 @@ The program also generates three output files:
 * _params
 	* b0, b1, bias, slope, x75, x25, x72-x25
 * _pred: p(x) for 50 x points across the range of input x
-* _dist: model param distribution based on parametric [bootstrap](http://en.wikipedia.org/wiki/Bootstrapping_(statistics))
+* _dist: model param distribution based on parametric [bootstrap](http://goo.gl/iMZIH)
 
 ### An Example
 
