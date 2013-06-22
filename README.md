@@ -60,7 +60,7 @@ an example data file is exdata
 	plot 'exdata' using 1:($2 + (rand(0)/20)) title 'data' with points, \
 	     'exdata_pred' using 1:2 title 'model' with lines
 	***************************************************************
-	simulating 10000 times...
+	parametric bootstrap: simulating 10000 times...
 	done
 
 An example of the graphic produced by the [gnuplot](http://www.gnuplot.info) commands for exdata is shown below. Note that the data are offset in y using random values, to help with visualization of the (binary) responses.
