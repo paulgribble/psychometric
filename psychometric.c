@@ -3,7 +3,7 @@
  * Author: Paul L. Gribble
  * http://www.gribblelab.org
  * April 4, 2013
- * compile with: gcc -Wall -o psychometric psychometric.c nmsimplex.c
+ * compile with: gcc -o psychometric psychometric.c nmsimplex.c -lm
  * loads in an ascii data file (2 columns: col1 = x position, col2 = response {0,1})
  * and fits a psychophysical function using binomial model with logistic link function
  * spits out bias (50% point), slope at 50%,
