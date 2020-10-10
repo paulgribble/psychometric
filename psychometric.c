@@ -193,15 +193,15 @@ double nll(double x[], void *extra)
 
 		 	// construct filenames to store modelparams and modelpred
 		 	char fn_modelparams[256];
-		 	strcat(fn_modelparams, argv[1]);
+		 	strcpy(fn_modelparams, argv[1]);
 		 	strcat(fn_modelparams, "_");
 		 	strcat(fn_modelparams, "params");
 		 	char fn_dist[256];
-		 	strcat(fn_dist, argv[1]);
+		 	strcpy(fn_dist, argv[1]);
 		 	strcat(fn_dist, "_");
 		 	strcat(fn_dist, "dist");
 		 	char fn_modelpred[256];
-		 	strcat(fn_modelpred, argv[1]);
+		 	strcpy(fn_modelpred, argv[1]);
 		 	strcat(fn_modelpred, "_");
 		 	strcat(fn_modelpred, "pred");
 
